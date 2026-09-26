@@ -27,8 +27,9 @@ MAX_RETRIES: int = 3
 RETRY_BACKOFF_BASE_SECONDS: float = 1.5
 REQUEST_DELAY_SECONDS: float = 0.6  # politeness delay between requests
 USER_AGENT: str = (
-    "ProfessorResearchAgent/1.0 (+educational research tool; "
-    "respects robots.txt; contact: set-your-contact-email)"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/153.0.0.0 Safari/537.36"
 )
 
 # ---------------------------------------------------------------------------
