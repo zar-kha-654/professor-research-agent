@@ -147,43 +147,48 @@ site_url = st.text_input("Enter institutional faculty website", placeholder="htt
 
 if st.button("🔎 Analyze Website", disabled=not site_url):
     if not is_valid_url(site_url):
-        st.error("That doesn't look like a valid URL. Include the scheme, e.g. https://")
+        st.error(
+            "That doesn't look like a valid URL. Include the scheme, e.g. https://"
+        )
     else:
-                reachable, status_code, err = is_reachable(site_url)
+        reachable, status_code, err = is_reachable(site_url)
 
-        if not reachable and status_code == 403:
-            st.warning(
-                "The website is blocking automated requests from Streamlit Cloud (403). "
-                "You can still try the research workflow, but some pages may be unavailable."
-            )
-            continue_anyway = st.checkbox(
-                "Continue despite the 403 response",
-                value=True,
-                key="continue_after_403",
-            )
-        elif not reachable:
+        if not reachable and status_code != 403:
             st.error(
                 f"The website could not be accessed ({err or status_code}). "
                 "Please check the URL or try the faculty directory page directly."
             )
-            continue_anyway = False
         else:
-            continue_anyway = True
+            if status_code == 403:
+                st.warning(
+                    "The website returned 403 Forbidden. "
+                    "Trying the discovery step anyway..."
+                )
 
-        if continue_anyway:
-            progress_bar = st.progress(0, text="Crawling institutional site…")
+            progress_bar = st.progress(
+                0,
+                text="Crawling institutional site…"
+            )
             status_area = st.empty()
 
             def _cb(current, total, url):
                 pct = min(current / max(total, 1), 1.0)
-                progress_bar.progress(pct, text=f"Analyzed {current}/{total} pages")
+                progress_bar.progress(
+                    pct,
+                    text=f"Analyzed {current}/{total} pages"
+                )
                 status_area.caption(url)
 
-            discovery = discover_faculty_pages(site_url, max_pages=max_pages, progress_callback=_cb)
+            discovery = discover_faculty_pages(
+                site_url,
+                max_pages=max_pages,
+                progress_callback=_cb,
+            )
+
             st.session_state["discovery_result"] = discovery
+
             progress_bar.empty()
             status_area.empty()
-
 discovery = st.session_state["discovery_result"]
 if discovery is not None:
     if not discovery.reachable:
