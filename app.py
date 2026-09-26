@@ -271,7 +271,6 @@ for candidate in ["Professor", "Full Name", "Name"]:
 start_disabled = (
     df is None
     or discovery is None
-    or not discovery.reachable
     or not all_requested_fields
     or not api_key
 )
