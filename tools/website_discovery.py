@@ -71,8 +71,17 @@ def discover_faculty_pages(
     max_pages = min(max_pages, MAX_PAGES_HARD_CAP)
 
     root_result = fetch_page(base_url)
-    if not root_result.success:
-        return DiscoveryResult(base_url=base_url, reachable=False, error=root_result.error)
+
+if not root_result.success:
+    return DiscoveryResult(
+        base_url=base_url,
+        reachable=False,
+        error=(
+            f"{root_result.error} "
+            "This site does not allow automated access from the research agent. "
+            "Please provide a directly accessible faculty directory or profile URL."
+        ),
+    )
 
     result = DiscoveryResult(
         base_url=base_url, reachable=True, title=root_result.title, pages_discovered=1
